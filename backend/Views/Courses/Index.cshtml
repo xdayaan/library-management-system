@@ -1,0 +1,20 @@
+@model IEnumerable<LMS.Models.Course>
+
+<h1>Courses</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var course in Model)
+    {
+        <tr>
+            <td>@course.Id</td>
+            <td>@course.Name</td>
+        </tr>
+    }
+    </tbody>
+</table>
