@@ -1,0 +1,21 @@
+@model IEnumerable<LMS.Models.Student>
+<h1>Students</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Roll Number</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.Id</td>
+                <td>@student.RollNumber</td>
+                <td>@student.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>
