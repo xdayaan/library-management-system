@@ -9,5 +9,6 @@ namespace LMS.Data
             : base(options) { }
 
         public DbSet<Course> Courses { get; set; } = default!;
+        public DbSet<Student> Students { get; set; } = default!;
     }
 }
