@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using LMS.Data;
 using LMS.Models;
+using LMS.Utils;
+
 
 [ApiController]
 [Route("[controller]")]
@@ -31,7 +33,7 @@ public IActionResult GetAll(
         query = query.Where(s => s.CourseId == courseId.Value);
     
     if (!string.IsNullOrEmpty(name))
-        query = query.Where(s => s.Address.Contains(name)); // No name field, assuming this is a search across other text fields
+        query = query.Where(s => s.Name.Contains(name)); 
     
     if (rollNumber.HasValue)
         query = query.Where(s => s.RollNumber == rollNumber.Value);
@@ -56,6 +58,7 @@ public IActionResult GetAll(
     [HttpPost]
     public IActionResult Add(Student student)
     {
+        student.Password = PasswordHandler.Encrypt(student.Password);
         _context.Students.Add(student);
         _context.SaveChanges();
         return CreatedAtAction(nameof(Get), new { id = student.Id }, student);
@@ -66,6 +69,7 @@ public IActionResult GetAll(
     {
         var student = _context.Students.Find(id);
         if(student == null) return NotFound();
+        student.Name = updatedStudent.Name;
         student.RollNumber = updatedStudent.RollNumber;
         student.Email = updatedStudent.Email;
         student.Phone = updatedStudent.Phone;
@@ -73,7 +77,7 @@ public IActionResult GetAll(
         student.CourseId = updatedStudent.CourseId;
         student.Photo = updatedStudent.Photo;
         student.Year = updatedStudent.Year;
-        student.Password = updatedStudent.Password;
+        student.Password = PasswordHandler.Encrypt(updatedStudent.Password);
         _context.SaveChanges();
         return NoContent();
     }
