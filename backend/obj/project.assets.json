@@ -2427,19 +2427,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\xdayaan\\.nuget\\packages\\": {}
+    "C:\\Users\\barkh\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\code\\xdas\\LMS\\backend\\..csproj",
+      "projectUniqueName": "C:\\Users\\barkh\\OneDrive\\Desktop\\Lms2\\backend\\..csproj",
       "projectName": ".",
-      "projectPath": "D:\\code\\xdas\\LMS\\backend\\..csproj",
-      "packagesPath": "C:\\Users\\xdayaan\\.nuget\\packages\\",
-      "outputPath": "D:\\code\\xdas\\LMS\\backend\\obj\\",
+      "projectPath": "C:\\Users\\barkh\\OneDrive\\Desktop\\Lms2\\backend\\..csproj",
+      "packagesPath": "C:\\Users\\barkh\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\barkh\\OneDrive\\Desktop\\Lms2\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\xdayaan\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\barkh\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
