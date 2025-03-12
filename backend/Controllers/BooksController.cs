@@ -39,15 +39,17 @@ public class BooksController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
-    {
-        var book = _context.Books.Find(id);
-        if (book is null) return NotFound();
-        _context.Books.Remove(book);
-        _context.SaveChanges();
-        return NoContent();
-    }
+    // [HttpDelete("{id}")]
+    // public IActionResult Delete(int id)
+    // {
+    //     var book = _context.Books.Find(id);
+    //     if (book is null) return NotFound();
+    //     _context.Books.Remove(book);
+    //     _context.SaveChanges();
+    //     return NoContent();
+    // }
+
+    
     [HttpPatch("{id}/status")]
     public IActionResult ChangeStatus(int id, Status status)
     {

@@ -3,9 +3,10 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-public class PasswordHandler
+namespace LMS.Utils {
+    public class PasswordHandler
 {
-    private static readonly byte[] Key = Encoding.UTF8.GetBytes("your-256-bit-key-here-should-be-32-chars");
+    private static readonly byte[] Key = Encoding.UTF8.GetBytes("12345678901234567890123456789012");
 
     public static string Encrypt(string text)
     {
@@ -27,5 +28,8 @@ public class PasswordHandler
         var decrypted = decryptor.TransformFinalBlock(Convert.FromBase64String(parts[1]), 0, Convert.FromBase64String(parts[1]).Length);
         return Encoding.UTF8.GetString(decrypted);
     }
+}
+
+
 }
 

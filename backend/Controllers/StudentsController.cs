@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using LMS.Data;
 using LMS.Models;
+using LMS.Utils;
+
 
 [ApiController]
 [Route("[controller]")]
@@ -56,6 +58,7 @@ public IActionResult GetAll(
     [HttpPost]
     public IActionResult Add(Student student)
     {
+        student.Password = PasswordHandler.Encrypt(student.Password);
         _context.Students.Add(student);
         _context.SaveChanges();
         return CreatedAtAction(nameof(Get), new { id = student.Id }, student);
@@ -74,7 +77,7 @@ public IActionResult GetAll(
         student.CourseId = updatedStudent.CourseId;
         student.Photo = updatedStudent.Photo;
         student.Year = updatedStudent.Year;
-        student.Password = updatedStudent.Password;
+        student.Password = PasswordHandler.Encrypt(updatedStudent.Password);
         _context.SaveChanges();
         return NoContent();
     }
