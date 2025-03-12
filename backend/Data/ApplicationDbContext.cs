@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using LMS.Models;
+using Microsoft.VisualBasic;
 
 namespace LMS.Data
 {
@@ -12,5 +13,7 @@ namespace LMS.Data
         public DbSet<Student> Students { get; set; } = default!;
         public DbSet<Book> Books { get; set; } = default!;
         public DbSet<Librarian> Librarian { get; set; } = default!;
+        public DbSet<Record> Record { get; set; } = default!;
+
     }
 }
