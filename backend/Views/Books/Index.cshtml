@@ -1,0 +1,37 @@
+@model IEnumerable<LMS.Models.Book>
+
+<h1>Books</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Serial Number</th>
+            <th>Name</th>
+            <th>Author</th>
+            <th>Publisher</th>
+            <th>Subject</th>
+            <th>Course</th>
+            <th>Published Date</th>
+            <th>Stock</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.Id</td>
+                <td>@book.SerialNumber</td>
+                <td>@book.Name</td>
+                <td>@book.Author</td>
+                <td>@book.Publisher</td>
+                <td>@book.Subject</td>
+                <td>@(book.Course != null ? book.Course.Name : "N/A")</td>
+                <td>@book.PublishedDate.ToString("yyyy-MM-dd")</td>
+                <td>@book.Stock</td>
+                <td>@book.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
