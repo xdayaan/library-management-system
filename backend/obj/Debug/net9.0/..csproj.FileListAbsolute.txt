@@ -387,3 +387,6 @@ C:\Users\aleez\lms\backend\obj\Debug\net9.0\refint\..dll
 C:\Users\aleez\lms\backend\obj\Debug\net9.0\..pdb
 C:\Users\aleez\lms\backend\obj\Debug\net9.0\..genruntimeconfig.cache
 C:\Users\aleez\lms\backend\obj\Debug\net9.0\ref\..dll
+D:\code\xdas\LMS\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\code\xdas\LMS\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\code\xdas\LMS\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll

@@ -11,6 +11,10 @@ public class BooksController : ControllerBase
     public BooksController(ApplicationDbContext context) => _context = context;
 
 
+    [HttpGet]
+    public IActionResult GetAll() => Ok(_context.Books);
+
+
     [HttpGet("{id}")]
     public ActionResult<Book> GetById(int id) =>
         _context.Books.Find(id) is Book c ? c : NotFound();

@@ -31,7 +31,7 @@ public IActionResult GetAll(
         query = query.Where(s => s.CourseId == courseId.Value);
     
     if (!string.IsNullOrEmpty(name))
-        query = query.Where(s => s.Address.Contains(name)); // No name field, assuming this is a search across other text fields
+        query = query.Where(s => s.Name.Contains(name)); 
     
     if (rollNumber.HasValue)
         query = query.Where(s => s.RollNumber == rollNumber.Value);
@@ -66,6 +66,7 @@ public IActionResult GetAll(
     {
         var student = _context.Students.Find(id);
         if(student == null) return NotFound();
+        student.Name = updatedStudent.Name;
         student.RollNumber = updatedStudent.RollNumber;
         student.Email = updatedStudent.Email;
         student.Phone = updatedStudent.Phone;
