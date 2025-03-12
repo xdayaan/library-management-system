@@ -11,5 +11,6 @@ namespace LMS.Data
         public DbSet<Course> Courses { get; set; } = default!;
         public DbSet<Student> Students { get; set; } = default!;
         public DbSet<Book> Books { get; set; } = default!;
+        public DbSet<Librarian> Librarian { get; set; } = default!;
     }
 }
