@@ -1,0 +1,28 @@
+@model IEnumerable<LMS.Models.Record>
+<h1>Record</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Student </th>
+            <th>Book_Id</th>
+            <th>Issue_Date</th>
+            <th>Return_Date</th>
+            <th>Due_Date</th>
+            <th>Fine</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var record in Model)
+        {
+            <tr>
+                <td>@record.Id</td>
+                <td>@record.Book_Id</td>
+                <td>@record.Issue_Date</td>
+                <td>@record.Return_Date</td>
+                <td>@record.Due_Date</td>
+                <td>@record.Fine</td>
+            </tr>
+        }
+    </tbody>
+</table>
