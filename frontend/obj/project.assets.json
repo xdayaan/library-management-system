@@ -13,9 +13,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\code\\xdas\\LMS\\frontend\\frontend.csproj",
-      "projectName": "frontend",
-      "projectPath": "D:\\code\\xdas\\LMS\\frontend\\frontend.csproj",
+      "projectUniqueName": "D:\\code\\xdas\\LMS\\frontend\\..csproj",
+      "projectName": ".",
+      "projectPath": "D:\\code\\xdas\\LMS\\frontend\\..csproj",
       "packagesPath": "C:\\Users\\xdayaan\\.nuget\\packages\\",
       "outputPath": "D:\\code\\xdas\\LMS\\frontend\\obj\\",
       "projectStyle": "PackageReference",

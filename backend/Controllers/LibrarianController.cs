@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
 [Route("[controller]")]
+
+
+
 public class LibrarianController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -29,7 +32,7 @@ public class LibrarianController : ControllerBase
         return librarian;
     }
 
-    [Authorize]
+    // [Authorize]
     [HttpPost]
     public IActionResult Add(Librarian librarian)
     {
