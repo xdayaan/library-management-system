@@ -1,0 +1,22 @@
+@model IEnumerable<LMS.Models.Record>
+<h1>Records</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Student</th>
+            <th>Fine</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@(item.Book?.Name ?? "N/A") (@item.BookId)</td>
+                <td>@(item.Student?.Name ?? "N/A") (@item.StudentId)</td>
+                <td>@item.Fine</td>
+            </tr>
+        }
+    </tbody>
+</table>
