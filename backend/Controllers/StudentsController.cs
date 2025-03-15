@@ -240,4 +240,19 @@ public class StudentsController : ControllerBase
         _context.SaveChanges();
         return NoContent();
     }
+    [HttpGet("count")]
+    public async Task<IActionResult> GetTotalStudentsCount()
+    {
+        try
+        {
+            int totalStudents = await _context.Students.CountAsync();
+            return Ok(totalStudents);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
 }
+

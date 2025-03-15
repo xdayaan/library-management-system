@@ -109,11 +109,15 @@
                             <DataGridTextColumn Header="Father's Name" Binding="{Binding FatherName}" Width="150"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,20">
-                        <Button Content="Add New Student" Margin="5" Padding="10,5" Click="OpenStudentManagement"/>
-                        <Button Content="View All Students" Margin="5" Padding="10,5" Click="OpenStudentManagement"/>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,20,10">
+                        <Button Content="Previous" Click="PreviousPage_Click" Padding="10,5" Margin="5,0"/>
+                        <TextBlock x:Name="StudentsCountText" VerticalAlignment="Center" FontSize="14" FontWeight="Bold" Margin="10,0"/>
+                        <Button Content="Next" Click="NextPage_Click" Padding="10,5" Margin="5,0"/>
                     </StackPanel>
+                    <TextBlock x:Name="StudentCountText"
+                        Grid.Row="2" HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom" Margin="20" 
+                        FontSize="14" FontWeight="Bold"/>
                 </Grid>
                 
                 <!-- Books Panel -->

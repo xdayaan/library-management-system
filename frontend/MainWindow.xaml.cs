@@ -65,7 +65,11 @@ public class Course {
 
 public partial class MainWindow : Window
 {
-    
+    public MainWindow()
+    {
+        InitializeComponent();
+    }
+
     private void SetActiveButton(Button? activeButton)
     {
         if (activeButton == null) return; // Prevents null reference exceptions
@@ -101,10 +105,6 @@ public partial class MainWindow : Window
     protected void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-    public MainWindow()
-    {
-        InitializeComponent();
     }
 
     private async void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -242,7 +242,9 @@ public partial class MainWindow : Window
         CoursesPanel.Visibility = Visibility.Collapsed;
         RecordsPanel.Visibility = Visibility.Collapsed;
     }
-    
+
+    private int currentPage = 1;
+    private int totalStudents;
     private async Task LoadStudentsData()
     {
         try 
@@ -250,13 +252,21 @@ public partial class MainWindow : Window
             var token = Application.Current.Properties["AuthToken"] as string ?? string.Empty;
             using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await client.GetAsync("http://localhost:5056/Students?page=1&pageSize=10&sortBy=created_on&orderBy=desc");
             
-            if (response.IsSuccessStatusCode) 
+            var response = await client.GetAsync($"http://localhost:5056/Students?page={currentPage}&pageSize=10&sortBy=created_on&orderBy=desc");
+            var totalCountResponse = await client.GetAsync("http://localhost:5056/Students/count"); // Assuming API returns total student count
+
+            if (response.IsSuccessStatusCode && totalCountResponse.IsSuccessStatusCode) 
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var studentResponse = JsonSerializer.Deserialize<StudentResponse>(json);
                 StudentsGrid.ItemsSource = studentResponse?.Items;
+
+                var totalCountString = await totalCountResponse.Content.ReadAsStringAsync();
+                if (int.TryParse(totalCountString, out totalStudents))
+                {
+                    StudentCountText.Text = $"Showing {StudentsGrid.Items.Count} out of {totalStudents} students";
+                }
             } 
             else 
             {
@@ -268,7 +278,26 @@ public partial class MainWindow : Window
             MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
-    
+
+    private async void NextPage_Click(object sender, RoutedEventArgs e)
+    {
+        if (currentPage * 10 < totalStudents)
+        {
+        currentPage++;
+        await LoadStudentsData();
+        }
+    }
+
+    private async void PreviousPage_Click(object sender, RoutedEventArgs e)
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            await LoadStudentsData();
+        }
+    }
+
+
     // Open the dedicated student management window
     private void OpenStudentManagement(object sender, RoutedEventArgs e)
     {
