@@ -110,9 +110,9 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,20,10">
-                        <Button Content="Previous" Click="PreviousPage_Click" Padding="10,5" Margin="5,0"/>
+                        <Button x:Name="PreviousButton" Content="Previous" Style="{StaticResource NavButtonStyle}" Click="PreviousPage_Click"/>
                         <TextBlock x:Name="StudentCountText" VerticalAlignment="Center" FontSize="14" FontWeight="Bold" Margin="10,0"/>
-                        <Button Content="Next" Click="NextPage_Click" Padding="10,5" Margin="5,0"/>
+                        <Button x:Name="NextButton" Content="Next" Style="{StaticResource NavButtonStyle}" Click="NextPage_Click"/>
                     </StackPanel>
                 </Grid>
                 
@@ -162,10 +162,7 @@
                 </Grid>
                 
                 <!-- Debug Info - Can be removed in production -->
-                <TextBlock x:Name="AuthToken" Text="Auth Token" 
-                           Style="{StaticResource UserNameTextStyle}" 
-                           VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                           Margin="0,0,15,15" Opacity="0.5"/>
+                <TextBlock x:Name="AuthToken" Text="Auth Token" Visibility="Collapsed"/>
             </Grid>
         </Grid>
     </Grid>
