@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 //for api
 using System;
@@ -64,6 +65,43 @@ public class Course {
 
 public partial class MainWindow : Window
 {
+    
+    private void SetActiveButton(Button? activeButton)
+    {
+        if (activeButton == null) return; // Prevents null reference exceptions
+
+        // Get parent container dynamically (if not using NavPanel)
+        var parentPanel = (activeButton.Parent as Panel) ?? FindParent<Panel>(activeButton);
+        if (parentPanel == null) return;
+
+        // Reset all buttons inside the panel
+        foreach (var child in parentPanel.Children)
+        {
+            if (child is Button btn)
+                btn.Tag = "Inactive";
+        }
+
+        // Set clicked button as active
+        activeButton.Tag = "Active";
+    }
+
+    // Generic method to find parent of a specific type
+    private T? FindParent<T>(DependencyObject child) where T : DependencyObject
+    {
+        DependencyObject parent = VisualTreeHelper.GetParent(child);
+        while (parent != null && !(parent is T))
+        {
+            parent = VisualTreeHelper.GetParent(parent);
+        }
+        return parent as T;
+    }
+
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
     public MainWindow()
     {
         InitializeComponent();
@@ -162,9 +200,11 @@ public partial class MainWindow : Window
         ShowStudentsPanel(sender, e);
     }
 
+
     // Navigation methods for tab switching
     private void ShowStudentsPanel(object sender, RoutedEventArgs e)
     {
+        SetActiveButton(sender as Button);
         HideAllContentPanels();
         StudentsPanel.Visibility = Visibility.Visible;
         LoadStudentsData().ConfigureAwait(false);
@@ -172,6 +212,7 @@ public partial class MainWindow : Window
     
     private void ShowBooksPanel(object sender, RoutedEventArgs e)
     {
+        SetActiveButton(sender as Button);
         HideAllContentPanels();
         BooksPanel.Visibility = Visibility.Visible;
         // TODO: Load books data when implemented
@@ -179,6 +220,7 @@ public partial class MainWindow : Window
     
     private void ShowCoursesPanel(object sender, RoutedEventArgs e)
     {
+        SetActiveButton(sender as Button);
         HideAllContentPanels();
         CoursesPanel.Visibility = Visibility.Visible;
         // TODO: Load courses data when implemented
@@ -186,6 +228,7 @@ public partial class MainWindow : Window
     
     private void ShowRecordsPanel(object sender, RoutedEventArgs e)
     {
+        SetActiveButton(sender as Button);
         HideAllContentPanels();
         RecordsPanel.Visibility = Visibility.Visible;
         // TODO: Load records data when implemented

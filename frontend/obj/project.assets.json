@@ -8,24 +8,32 @@
     "net10.0-windows7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\xdayaan\\.nuget\\packages\\": {}
+    "C:\\Users\\aleez\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\code\\xdas\\LMS\\frontend\\..csproj",
+      "projectUniqueName": "C:\\Users\\aleez\\lms\\frontend\\..csproj",
       "projectName": ".",
-      "projectPath": "D:\\code\\xdas\\LMS\\frontend\\..csproj",
-      "packagesPath": "C:\\Users\\xdayaan\\.nuget\\packages\\",
-      "outputPath": "D:\\code\\xdas\\LMS\\frontend\\obj\\",
+      "projectPath": "C:\\Users\\aleez\\lms\\frontend\\..csproj",
+      "packagesPath": "C:\\Users\\aleez\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\aleez\\lms\\frontend\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\xdayaan\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\aleez\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net10.0-windows"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

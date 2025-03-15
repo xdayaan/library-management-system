@@ -164,6 +164,8 @@
         <Setter Property="BorderBrush" Value="{StaticResource PrimaryDarkBrush}"/>
         <Setter Property="Padding" Value="15,0"/>
         <Setter Property="Effect" Value="{StaticResource ButtonShadowEffect}"/>
+        <Setter Property="Tag" Value="Inactive"/>
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -176,18 +178,27 @@
                                          Margin="{TemplateBinding Padding}"/>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!-- Hover Effect -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background" Value="{StaticResource PrimaryDarkBrush}"/>
                         </Trigger>
+                        <!-- Click Effect -->
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Effect" Value="{x:Null}"/>
                             <Setter Property="Background" Value="{StaticResource PrimaryDarkBrush}"/>
+                        </Trigger>
+                        <!-- Active Tab Effect -->
+                        <Trigger Property="Tag" Value="Active">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
     
     <Style x:Key="LogoutButtonStyle" TargetType="Button">
         <Setter Property="Height" Value="40"/>
