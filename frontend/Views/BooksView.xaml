@@ -1,0 +1,392 @@
+<UserControl x:Class="LibraryManagementSystem.Views.BooksView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Books Management" Style="{StaticResource HeaderTextStyle}"/>
+                <TextBlock Text="Manage your library's book collection" 
+                           FontSize="16" 
+                           Foreground="{StaticResource DarkGrayBrush}"/>
+            </StackPanel>
+
+            <Button Grid.Column="1" 
+                    Style="{StaticResource SecondaryButtonStyle}"
+                    Command="{Binding SearchBooksCommand}"
+                    Height="40" Width="100"
+                    Margin="0,0,16,0">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Magnify" Width="16" Height="16" Margin="0,0,8,0"/>
+                    <TextBlock Text="Search"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Column="2" 
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding OpenAddDialogCommand}"
+                    Height="40" Width="120">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Plus" Width="16" Height="16" Margin="0,0,8,0"/>
+                    <TextBlock Text="Add Book"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Search Bar -->
+        <materialDesign:Card Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,24" Padding="24,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0"
+                         Style="{StaticResource ModernTextBoxStyle}"
+                         materialDesign:HintAssist.Hint="Search books by name, author, or ISBN..."
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,16,0"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding TotalItems, StringFormat='Total: {0} books'}" 
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource DarkGrayBrush}"
+                               FontWeight="Medium"
+                               Margin="0,0,16,0"/>
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+
+        <!-- Books Table -->
+        <materialDesign:Card Grid.Row="2" Style="{StaticResource CardStyle}" Padding="0">
+            <DataGrid ItemsSource="{Binding Books}"
+                      SelectedItem="{Binding SelectedBook}"
+                      Style="{StaticResource ModernDataGridStyle}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      GridLinesVisibility="Horizontal"
+                      HeadersVisibility="Column">
+                
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Serial #" 
+                                        Binding="{Binding SerialNumber}" 
+                                        Width="80"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Book Name" 
+                                        Binding="{Binding Name}" 
+                                        Width="200"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Author" 
+                                        Binding="{Binding Author}" 
+                                        Width="150"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Publisher" 
+                                        Binding="{Binding Publisher}" 
+                                        Width="130"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Subject" 
+                                        Binding="{Binding Subject}" 
+                                        Width="120"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Course" 
+                                        Binding="{Binding CourseName}" 
+                                        Width="100"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="ISBN" 
+                                        Binding="{Binding ISBN}" 
+                                        Width="120"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Stock" 
+                                        Binding="{Binding Stock}" 
+                                        Width="70"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Status" 
+                                        Binding="{Binding StatusText}" 
+                                        Width="80"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTemplateColumn Header="Actions" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                            Command="{Binding DataContext.OpenEditDialogCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="Edit Book"
+                                            Margin="4,0">
+                                        <materialDesign:PackIcon Kind="Edit" Width="16" Height="16" Foreground="{StaticResource TealBrush}"/>
+                                    </Button>
+                                    
+                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                            Command="{Binding DataContext.DeleteBookCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="Delete Book"
+                                            Margin="4,0">
+                                        <materialDesign:PackIcon Kind="Delete" Width="16" Height="16" Foreground="{StaticResource ErrorBrush}"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:Card>
+
+        <!-- Pagination -->
+        <materialDesign:Card Grid.Row="3" Style="{StaticResource CardStyle}" Margin="0,24,0,0" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Page:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding CurrentPage}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="of" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding TotalPages}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                    <TextBlock Text="{Binding TotalItems, StringFormat='({0} total items)'}" VerticalAlignment="Center" Foreground="{StaticResource DarkGrayBrush}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                            Command="{Binding PreviousPageCommand}"
+                            IsEnabled="{Binding CurrentPage, Converter={StaticResource GreaterThanConverter}, ConverterParameter=1}"
+                            ToolTip="Previous Page">
+                        <materialDesign:PackIcon Kind="ChevronLeft" Width="20" Height="20"/>
+                    </Button>
+
+                    <!-- Page Numbers -->
+                    <ItemsControl ItemsSource="{Binding PageNumbers}" Margin="8,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding}"
+                                        Command="{Binding DataContext.GoToPageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                        Width="32" Height="32"
+                                        Margin="2,0">
+                                    <Button.Foreground>
+                                        <MultiBinding Converter="{StaticResource CurrentPageToColorConverter}">
+                                            <Binding/>
+                                            <Binding Path="DataContext.CurrentPage" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                                        </MultiBinding>
+                                    </Button.Foreground>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                            Command="{Binding NextPageCommand}"
+                            IsEnabled="{Binding CurrentPage, Converter={StaticResource LessThanConverter}, ConverterParameter={Binding TotalPages}}"
+                            ToolTip="Next Page">
+                        <materialDesign:PackIcon Kind="ChevronRight" Width="20" Height="20"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+
+        <!-- Add/Edit Dialog -->
+        <Grid Grid.RowSpan="4" 
+              Background="#80000000" 
+              Visibility="{Binding IsAddEditDialogOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <materialDesign:Card HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" 
+                               Width="600" 
+                               MaxHeight="700"
+                               Padding="32">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BooleanToTextConverter}, ConverterParameter='Edit Book|Add New Book'}" 
+                                   Style="{StaticResource HeaderTextStyle}"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBox Grid.Row="0" Grid.Column="0"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="Serial Number"
+                                     Text="{Binding NewBook.SerialNumber}"
+                                     Margin="0,0,8,0"/>
+
+                            <TextBox Grid.Row="0" Grid.Column="1"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="Book Name*"
+                                     Text="{Binding NewBook.Name}"
+                                     Margin="8,0,0,0"/>
+
+                            <TextBox Grid.Row="1" Grid.Column="0"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="Author*"
+                                     Text="{Binding NewBook.Author}"
+                                     Margin="0,0,8,0"/>
+
+                            <TextBox Grid.Row="1" Grid.Column="1"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="Publisher"
+                                     Text="{Binding NewBook.Publisher}"
+                                     Margin="8,0,0,0"/>
+
+                            <TextBox Grid.Row="2" Grid.Column="0"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="Subject"
+                                     Text="{Binding NewBook.Subject}"
+                                     Margin="0,0,8,0"/>
+
+                            <ComboBox Grid.Row="2" Grid.Column="1"
+                                      Style="{StaticResource ModernComboBoxStyle}"
+                                      materialDesign:HintAssist.Hint="Course*"
+                                      ItemsSource="{Binding Courses}"
+                                      SelectedValue="{Binding NewBook.CourseId}"
+                                      SelectedValuePath="Id"
+                                      DisplayMemberPath="Name"
+                                      Margin="8,0,0,0"/>
+
+                            <TextBox Grid.Row="3" Grid.Column="0"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="ISBN"
+                                     Text="{Binding NewBook.ISBN}"
+                                     Margin="0,0,8,0"/>
+
+                            <TextBox Grid.Row="3" Grid.Column="1"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="Edition"
+                                     Text="{Binding NewBook.Edition}"
+                                     Margin="8,0,0,0"/>
+
+                            <TextBox Grid.Row="4" Grid.Column="0"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="Pages"
+                                     Text="{Binding NewBook.Pages}"
+                                     Margin="0,0,8,0"/>
+
+                            <TextBox Grid.Row="4" Grid.Column="1"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="Rack Number"
+                                     Text="{Binding NewBook.RackNumber}"
+                                     Margin="8,0,0,0"/>
+
+                            <TextBox Grid.Row="5" Grid.Column="0"
+                                     Style="{StaticResource ModernTextBoxStyle}"
+                                     materialDesign:HintAssist.Hint="Stock"
+                                     Text="{Binding NewBook.Stock}"
+                                     Margin="0,0,8,0"/>
+
+                            <ComboBox Grid.Row="5" Grid.Column="1"
+                                      Style="{StaticResource ModernComboBoxStyle}"
+                                      materialDesign:HintAssist.Hint="Status"
+                                      SelectedValue="{Binding NewBook.Status}"
+                                      Margin="8,0,0,0">
+                                <ComboBox.Items>
+                                    <ComboBoxItem Content="Active" Tag="1"/>
+                                    <ComboBoxItem Content="Inactive" Tag="0"/>
+                                </ComboBox.Items>
+                            </ComboBox>
+
+                            <DatePicker Grid.Row="6" Grid.ColumnSpan="2"
+                                        Style="{StaticResource MaterialDesignFilledDatePicker}"
+                                        materialDesign:HintAssist.Hint="Published Date"
+                                        SelectedDate="{Binding NewBook.PublishedDate}"
+                                        Height="48"
+                                        Margin="0,8"/>
+                        </Grid>
+
+                        <!-- Error/Success Messages -->
+                        <TextBlock Text="{Binding ErrorMessage}" 
+                                   Foreground="{StaticResource ErrorBrush}"
+                                   FontWeight="Medium"
+                                   TextWrapping="Wrap"
+                                   Margin="0,16,0,0"
+                                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                        <TextBlock Text="{Binding SuccessMessage}" 
+                                   Foreground="{StaticResource SuccessBrush}"
+                                   FontWeight="Medium"
+                                   TextWrapping="Wrap"
+                                   Margin="0,16,0,0"
+                                   Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                        <!-- Dialog Actions -->
+                        <StackPanel Orientation="Horizontal" 
+                                    HorizontalAlignment="Right" 
+                                    Margin="0,24,0,0">
+                            <Button Content="Cancel" 
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Command="{Binding CancelDialogCommand}"
+                                    Width="100"
+                                    Margin="0,0,16,0"/>
+                            
+                            <Button Content="{Binding IsEditMode, Converter={StaticResource BooleanToTextConverter}, ConverterParameter='Update|Save'}" 
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    Command="{Binding SaveBookCommand}"
+                                    IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
+                                    Width="100"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </materialDesign:Card>
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.RowSpan="4" 
+              Background="#80000000" 
+              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                            Width="48" Height="48"
+                            Foreground="{StaticResource TealBrush}"/>
+                <TextBlock Text="Loading..." 
+                           FontSize="16" FontWeight="Medium"
+                           Foreground="{StaticResource WhiteBrush}"
+                           HorizontalAlignment="Center"
+                           Margin="0,16,0,0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,250 @@
+<UserControl x:Class="LibraryManagementSystem.Views.RecordsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Issue/Return Records" Style="{StaticResource HeaderTextStyle}"/>
+                <TextBlock Text="Manage book lending and returns" 
+                           FontSize="16" 
+                           Foreground="{StaticResource DarkGrayBrush}"/>
+            </StackPanel>
+
+            <Button Grid.Column="1" 
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding OpenIssueDialogCommand}"
+                    Height="40" Width="130">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="BookPlus" Width="16" Height="16" Margin="0,0,8,0"/>
+                    <TextBlock Text="Issue Book"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Records Table -->
+        <materialDesign:Card Grid.Row="1" Style="{StaticResource CardStyle}" Padding="0">
+            <DataGrid ItemsSource="{Binding Records}"
+                      SelectedItem="{Binding SelectedRecord}"
+                      Style="{StaticResource ModernDataGridStyle}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      GridLinesVisibility="Horizontal"
+                      HeadersVisibility="Column">
+                
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Record ID" 
+                                        Binding="{Binding Id}" 
+                                        Width="80"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Book Name" 
+                                        Binding="{Binding BookName}" 
+                                        Width="200"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Student Name" 
+                                        Binding="{Binding StudentName}" 
+                                        Width="180"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Issue Date" 
+                                        Binding="{Binding IssueDate, StringFormat='dd/MM/yyyy'}" 
+                                        Width="100"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Due Date" 
+                                        Binding="{Binding DueDate, StringFormat='dd/MM/yyyy'}" 
+                                        Width="100"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Return Date" 
+                                        Binding="{Binding ReturnDate, StringFormat='dd/MM/yyyy'}" 
+                                        Width="100"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Fine" 
+                                        Binding="{Binding Fine, StringFormat='₹{0}'}" 
+                                        Width="80"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTemplateColumn Header="Status" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="12" Padding="8,4">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding StatusText}" Value="Returned">
+                                                    <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding StatusText}" Value="Overdue">
+                                                    <Setter Property="Background" Value="{StaticResource ErrorBrush}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding StatusText}" Value="Issued">
+                                                    <Setter Property="Background" Value="{StaticResource InfoBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding StatusText}" 
+                                               Foreground="{StaticResource WhiteBrush}"
+                                               FontWeight="Medium"
+                                               FontSize="11"
+                                               HorizontalAlignment="Center"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
+                    <DataGridTemplateColumn Header="Actions" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource PrimaryButtonStyle}"
+                                        Command="{Binding DataContext.ReturnBookCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Content="Return"
+                                        Height="32" Width="80"
+                                        FontSize="11"
+                                        Visibility="{Binding IsReturned, Converter={StaticResource InverseBoolToVisConverter}}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:Card>
+
+        <!-- Pagination -->
+        <materialDesign:Card Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,24,0,0" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Page:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding CurrentPage}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="of" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding TotalPages}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                    <TextBlock Text="{Binding TotalItems, StringFormat='({0} total records)'}" VerticalAlignment="Center" Foreground="{StaticResource DarkGrayBrush}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                            Command="{Binding PreviousPageCommand}"
+                            ToolTip="Previous Page">
+                        <materialDesign:PackIcon Kind="ChevronLeft" Width="20" Height="20"/>
+                    </Button>
+
+                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                            Command="{Binding NextPageCommand}"
+                            ToolTip="Next Page">
+                        <materialDesign:PackIcon Kind="ChevronRight" Width="20" Height="20"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+
+        <!-- Issue Book Dialog -->
+        <Grid Grid.RowSpan="3" 
+              Background="#80000000" 
+              Visibility="{Binding IsIssueDialogOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <materialDesign:Card HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" 
+                               Width="500" 
+                               Padding="32">
+                <StackPanel>
+                    <TextBlock Text="Issue Book" Style="{StaticResource HeaderTextStyle}"/>
+
+                    <ComboBox Style="{StaticResource ModernComboBoxStyle}"
+                              materialDesign:HintAssist.Hint="Select Book*"
+                              ItemsSource="{Binding Books}"
+                              SelectedValue="{Binding SelectedBookId}"
+                              SelectedValuePath="Id"
+                              DisplayMemberPath="Name"
+                              Margin="0,8"/>
+
+                    <ComboBox Style="{StaticResource ModernComboBoxStyle}"
+                              materialDesign:HintAssist.Hint="Select Student*"
+                              ItemsSource="{Binding Students}"
+                              SelectedValue="{Binding SelectedStudentId}"
+                              SelectedValuePath="Id"
+                              DisplayMemberPath="Name"
+                              Margin="0,8"/>
+
+                    <DatePicker Style="{StaticResource MaterialDesignFilledDatePicker}"
+                                materialDesign:HintAssist.Hint="Due Date*"
+                                SelectedDate="{Binding DueDate}"
+                                Height="48"
+                                Margin="0,8"/>
+
+                    <!-- Error/Success Messages -->
+                    <TextBlock Text="{Binding ErrorMessage}" 
+                               Foreground="{StaticResource ErrorBrush}"
+                               FontWeight="Medium"
+                               TextWrapping="Wrap"
+                               Margin="0,16,0,0"
+                               Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <TextBlock Text="{Binding SuccessMessage}" 
+                               Foreground="{StaticResource SuccessBrush}"
+                               FontWeight="Medium"
+                               TextWrapping="Wrap"
+                               Margin="0,16,0,0"
+                               Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <!-- Dialog Actions -->
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Right" 
+                                Margin="0,24,0,0">
+                        <Button Content="Cancel" 
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Command="{Binding CancelIssueDialogCommand}"
+                                Width="100"
+                                Margin="0,0,16,0"/>
+                        
+                        <Button Content="Issue Book" 
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Command="{Binding IssueBookCommand}"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
+                                Width="120"/>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.RowSpan="3" 
+              Background="#80000000" 
+              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                            Width="48" Height="48"
+                            Foreground="{StaticResource TealBrush}"/>
+                <TextBlock Text="Loading..." 
+                           FontSize="16" FontWeight="Medium"
+                           Foreground="{StaticResource WhiteBrush}"
+                           HorizontalAlignment="Center"
+                           Margin="0,16,0,0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

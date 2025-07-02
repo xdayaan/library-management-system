@@ -1,9 +1,143 @@
-﻿<Application x:Class="_.App"
+<Application x:Class="LibraryManagementSystem.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:_"
-             StartupUri="MainWindow.xaml">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:LibraryManagementSystem.Converters">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Material Design Theme -->
+                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Teal" SecondaryColor="LightBlue" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                
+                <!-- Custom Theme Colors -->
+                <ResourceDictionary>
+                    <!-- Converters -->
+                    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+                    <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+                    <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+                    <converters:StringToBrushConverter x:Key="StringToBrushConverter"/>
+                    <converters:BooleanToTextConverter x:Key="BooleanToTextConverter"/>
+                    <converters:InverseBoolToVisConverter x:Key="InverseBoolToVisConverter"/>
+                    <converters:GreaterThanConverter x:Key="GreaterThanConverter"/>
+                    <converters:LessThanConverter x:Key="LessThanConverter"/>
+                    <converters:CurrentPageToColorConverter x:Key="CurrentPageToColorConverter"/>
+
+                    <!-- Color Resources -->
+                    <Color x:Key="CreamColor">#F7F0DE</Color>
+                    <Color x:Key="LightAquaColor">#88E7D8</Color>
+                    <Color x:Key="TealColor">#0E8C91</Color>
+                    <Color x:Key="NavyColor">#041C26</Color>
+                    <Color x:Key="WhiteColor">#FFFFFF</Color>
+                    <Color x:Key="LightGrayColor">#F5F5F5</Color>
+                    <Color x:Key="GrayColor">#CCCCCC</Color>
+                    <Color x:Key="DarkGrayColor">#666666</Color>
+                    <Color x:Key="SuccessColor">#28a745</Color>
+                    <Color x:Key="WarningColor">#ffc107</Color>
+                    <Color x:Key="ErrorColor">#dc3545</Color>
+                    <Color x:Key="InfoColor">#17a2b8</Color>
+
+                    <!-- Brush Resources -->
+                    <SolidColorBrush x:Key="CreamBrush" Color="{StaticResource CreamColor}"/>
+                    <SolidColorBrush x:Key="LightAquaBrush" Color="{StaticResource LightAquaColor}"/>
+                    <SolidColorBrush x:Key="TealBrush" Color="{StaticResource TealColor}"/>
+                    <SolidColorBrush x:Key="NavyBrush" Color="{StaticResource NavyColor}"/>
+                    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource WhiteColor}"/>
+                    <SolidColorBrush x:Key="LightGrayBrush" Color="{StaticResource LightGrayColor}"/>
+                    <SolidColorBrush x:Key="GrayBrush" Color="{StaticResource GrayColor}"/>
+                    <SolidColorBrush x:Key="DarkGrayBrush" Color="{StaticResource DarkGrayColor}"/>
+                    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+                    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+                    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+                    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
+
+                    <!-- Gradient Brushes -->
+                    <LinearGradientBrush x:Key="PrimaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="{StaticResource LightAquaColor}" Offset="0"/>
+                        <GradientStop Color="{StaticResource TealColor}" Offset="1"/>
+                    </LinearGradientBrush>
+
+                    <LinearGradientBrush x:Key="HeaderGradientBrush" StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="{StaticResource NavyColor}" Offset="0"/>
+                        <GradientStop Color="{StaticResource TealColor}" Offset="1"/>
+                    </LinearGradientBrush>
+
+                    <LinearGradientBrush x:Key="CardGradientBrush" StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="{StaticResource WhiteColor}" Offset="0"/>
+                        <GradientStop Color="{StaticResource CreamColor}" Offset="1"/>
+                    </LinearGradientBrush>
+
+                    <!-- Button Styles -->
+                    <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                        <Setter Property="Background" Value="{StaticResource TealBrush}"/>
+                        <Setter Property="Foreground" Value="{StaticResource WhiteBrush}"/>
+                        <Setter Property="Height" Value="36"/>
+                        <Setter Property="FontWeight" Value="Medium"/>
+                        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="18"/>
+                        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp2"/>
+                    </Style>
+
+                    <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+                        <Setter Property="BorderBrush" Value="{StaticResource TealBrush}"/>
+                        <Setter Property="Foreground" Value="{StaticResource TealBrush}"/>
+                        <Setter Property="Height" Value="36"/>
+                        <Setter Property="FontWeight" Value="Medium"/>
+                        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="18"/>
+                    </Style>
+
+                    <!-- Card Style -->
+                    <Style x:Key="CardStyle" TargetType="materialDesign:Card">
+                        <Setter Property="Background" Value="{StaticResource CardGradientBrush}"/>
+                        <Setter Property="Margin" Value="8"/>
+                        <Setter Property="Padding" Value="16"/>
+                        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
+                    </Style>
+
+                    <!-- Text Styles -->
+                    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="24"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Foreground" Value="{StaticResource NavyBrush}"/>
+                        <Setter Property="Margin" Value="0,0,0,16"/>
+                    </Style>
+
+                    <Style x:Key="SubHeaderTextStyle" TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="18"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Foreground" Value="{StaticResource TealBrush}"/>
+                        <Setter Property="Margin" Value="0,0,0,8"/>
+                    </Style>
+
+                    <!-- TextBox Style -->
+                    <Style x:Key="ModernTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFilledTextBox}">
+                        <Setter Property="materialDesign:HintAssist.Background" Value="{StaticResource LightGrayBrush}"/>
+                        <Setter Property="materialDesign:TextFieldAssist.UnderlineBrush" Value="{StaticResource TealBrush}"/>
+                        <Setter Property="Margin" Value="0,4"/>
+                        <Setter Property="Height" Value="48"/>
+                    </Style>
+
+                    <!-- ComboBox Style -->
+                    <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignFilledComboBox}">
+                        <Setter Property="materialDesign:HintAssist.Background" Value="{StaticResource LightGrayBrush}"/>
+                        <Setter Property="materialDesign:TextFieldAssist.UnderlineBrush" Value="{StaticResource TealBrush}"/>
+                        <Setter Property="Margin" Value="0,4"/>
+                        <Setter Property="Height" Value="48"/>
+                    </Style>
+
+                    <!-- DataGrid Style -->
+                    <Style x:Key="ModernDataGridStyle" TargetType="DataGrid" BasedOn="{StaticResource MaterialDesignDataGrid}">
+                        <Setter Property="Background" Value="{StaticResource WhiteBrush}"/>
+                        <Setter Property="BorderBrush" Value="{StaticResource GrayBrush}"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+                        <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource LightGrayBrush}"/>
+                        <Setter Property="AlternatingRowBackground" Value="{StaticResource LightGrayBrush}"/>
+                        <Setter Property="RowBackground" Value="{StaticResource WhiteBrush}"/>
+                        <Setter Property="materialDesign:DataGridAssist.CellPadding" Value="12,8"/>
+                        <Setter Property="materialDesign:DataGridAssist.ColumnHeaderPadding" Value="12,12"/>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

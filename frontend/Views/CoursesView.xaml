@@ -1,0 +1,158 @@
+<UserControl x:Class="LibraryManagementSystem.Views.CoursesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Courses Management" Style="{StaticResource HeaderTextStyle}"/>
+                <TextBlock Text="Manage academic courses and programs" 
+                           FontSize="16" 
+                           Foreground="{StaticResource DarkGrayBrush}"/>
+            </StackPanel>
+
+            <Button Grid.Column="1" 
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{Binding OpenAddDialogCommand}"
+                    Height="40" Width="130">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Plus" Width="16" Height="16" Margin="0,0,8,0"/>
+                    <TextBlock Text="Add Course"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Courses Table -->
+        <materialDesign:Card Grid.Row="1" Style="{StaticResource CardStyle}" Padding="0">
+            <DataGrid ItemsSource="{Binding Courses}"
+                      SelectedItem="{Binding SelectedCourse}"
+                      Style="{StaticResource ModernDataGridStyle}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      GridLinesVisibility="Horizontal"
+                      HeadersVisibility="Column">
+                
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Course ID" 
+                                        Binding="{Binding Id}" 
+                                        Width="100"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Course Name" 
+                                        Binding="{Binding Name}" 
+                                        Width="300"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Created On" 
+                                        Binding="{Binding CreatedOn, StringFormat='dd/MM/yyyy HH:mm'}" 
+                                        Width="150"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTextColumn Header="Updated On" 
+                                        Binding="{Binding UpdatedOn, StringFormat='dd/MM/yyyy HH:mm'}" 
+                                        Width="150"
+                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"/>
+                    
+                    <DataGridTemplateColumn Header="Actions" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                            Command="{Binding DataContext.OpenEditDialogCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="Edit Course"
+                                            Margin="4,0">
+                                        <materialDesign:PackIcon Kind="Edit" Width="16" Height="16" Foreground="{StaticResource TealBrush}"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:Card>
+
+        <!-- Add/Edit Dialog -->
+        <Grid Grid.RowSpan="2" 
+              Background="#80000000" 
+              Visibility="{Binding IsAddEditDialogOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <materialDesign:Card HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" 
+                               Width="400" 
+                               Padding="32">
+                <StackPanel>
+                    <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BooleanToTextConverter}, ConverterParameter='Edit Course|Add New Course'}" 
+                               Style="{StaticResource HeaderTextStyle}"/>
+
+                    <TextBox Style="{StaticResource ModernTextBoxStyle}"
+                             materialDesign:HintAssist.Hint="Course Name*"
+                             Text="{Binding NewCourse.Name}"
+                             Margin="0,16"/>
+
+                    <!-- Error/Success Messages -->
+                    <TextBlock Text="{Binding ErrorMessage}" 
+                               Foreground="{StaticResource ErrorBrush}"
+                               FontWeight="Medium"
+                               TextWrapping="Wrap"
+                               Margin="0,16,0,0"
+                               Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <TextBlock Text="{Binding SuccessMessage}" 
+                               Foreground="{StaticResource SuccessBrush}"
+                               FontWeight="Medium"
+                               TextWrapping="Wrap"
+                               Margin="0,16,0,0"
+                               Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <!-- Dialog Actions -->
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Right" 
+                                Margin="0,24,0,0">
+                        <Button Content="Cancel" 
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Command="{Binding CancelDialogCommand}"
+                                Width="100"
+                                Margin="0,0,16,0"/>
+                        
+                        <Button Content="{Binding IsEditMode, Converter={StaticResource BooleanToTextConverter}, ConverterParameter='Update|Save'}" 
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Command="{Binding SaveCourseCommand}"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
+                                Width="100"/>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.RowSpan="2" 
+              Background="#80000000" 
+              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                            Width="48" Height="48"
+                            Foreground="{StaticResource TealBrush}"/>
+                <TextBlock Text="Loading..." 
+                           FontSize="16" FontWeight="Medium"
+                           Foreground="{StaticResource WhiteBrush}"
+                           HorizontalAlignment="Center"
+                           Margin="0,16,0,0"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
