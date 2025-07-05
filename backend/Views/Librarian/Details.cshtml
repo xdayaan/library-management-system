@@ -1,0 +1,38 @@
+@model LMS.Models.Librarian
+
+@{
+    ViewData["Title"] = "Librarian Details";
+}
+
+<div class="max-w-lg mx-auto">
+    <div class="d-flex justify-between items-center mb-4">
+        <h1>Librarian Details</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="card p-6 mb-4">
+        <div class="d-flex items-center gap-6 mb-4">
+            <div class="w-16 h-16 rounded-full bg-slate-100 d-flex justify-center items-center">
+                <i class="fas fa-user-shield text-3xl text-slate-300"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold">@Model.Name</h2>
+                <p class="text-secondary">@Model.Username</p>
+            </div>
+        </div>
+        
+        <div class="border-t pt-4">
+            <dl class="grid grid-cols-2 gap-2">
+                <dt class="font-bold text-secondary">ID:</dt>
+                <dd>#@Model.Id</dd>
+            </dl>
+        </div>
+    </div>
+</div>

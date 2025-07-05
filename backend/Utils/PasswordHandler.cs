@@ -7,7 +7,14 @@ namespace LMS.Utils
 {
     public class PasswordHandler
     {
-        private static readonly byte[] Key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET_KEY"));
+        private static readonly byte[] Key;
+
+        static PasswordHandler()
+        {
+            var secret = Environment.GetEnvironmentVariable("SECRET_KEY") ?? "DefaultSuperSecretKeyForDevelopmentOnly123";
+            using var sha256 = SHA256.Create();
+            Key = sha256.ComputeHash(Encoding.UTF8.GetBytes(secret));
+        }
 
         public static string Encrypt(string text)
         {
@@ -21,6 +28,7 @@ namespace LMS.Utils
             using var encryptor = aes.CreateEncryptor();
             byte[] encryptedBytes = encryptor.TransformFinalBlock(Encoding.UTF8.GetBytes(text), 0, text.Length);
             
+            // Format: IV:CipherText
             return Convert.ToBase64String(aes.IV) + ":" + Convert.ToBase64String(encryptedBytes);
         }
 

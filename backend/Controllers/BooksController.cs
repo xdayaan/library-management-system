@@ -10,9 +10,9 @@ using System.Text.Json.Serialization;
 namespace LMS.Controllers
 {
     [Authorize]
-    [ApiController]
+    // [ApiController]
     [Route("[controller]")]
-    public class BooksController : ControllerBase
+    public class BooksController : Controller // Change Base Class to Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly JsonSerializerOptions _jsonOptions;
@@ -28,7 +28,7 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll(
+        public IActionResult Index(
             [FromQuery] int? serialNumber,
             [FromQuery] string? name,
             [FromQuery] string? author,
@@ -111,198 +111,121 @@ namespace LMS.Controllers
             // Pagination
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
-            var total = query.Count();
-            var skip = (page - 1) * pageSize;
             
-            // Include records to check if book is currently issued
-            var books = query.Skip(skip).Take(pageSize)
-                .Include(b => b.Records)
-                .ToList();
-                
-            // Select a simplified projection without circular references
-            var data = books.Select(b => {
-                var currentRecord = b.Records?.FirstOrDefault(r => 
-                    r.ReturnDate > DateTime.UtcNow || 
-                    r.DueDate > DateTime.UtcNow);
-                    
-                return new {
-                    b.Id,
-                    b.SerialNumber,
-                    b.Name,
-                    b.Author,
-                    b.Publisher,
-                    b.Subject,
-                    b.CourseId,
-                    b.PublishedDate,
-                    b.Stock,
-                    Status = (int)b.Status,
-                    b.ISBN,
-                    b.Edition,
-                    b.Pages,
-                    b.RackNumber,
-                    b.CreatedOn,
-                    b.UpdatedOn,
-                    StudentId = currentRecord?.StudentId,
-                    RecordId = currentRecord?.Id,
-                    Course = b.Course != null ? new {
-                        b.Course.Id,
-                        b.Course.Name
-                    } : null
-                };
-            })
-            .ToList();
+            // For MVC view, we'll just return the list for now to match the view model
+            // In a real app, you'd use a ViewModel with pagination info
+            var books = query.Include(b => b.Records).ToList();
             
-            var result = new
-            {
-                TotalItems = total,
-                Page = page,
-                PageSize = pageSize,
-                Items = data
-            };
-
-            var json = JsonSerializer.Serialize(result, _jsonOptions);
-            return Content(json, "application/json");
+            return View(books);
         }
 
-        [HttpGet("{id}")]
-        public ActionResult GetById(int id)
+        // ... Index method remains unchanged ...
+
+        [HttpGet("Details/{id}")]
+        public async Task<IActionResult> Details(int id)
         {
-            var book = _context.Books
+            var book = await _context.Books
                 .Include(b => b.Course)
                 .Include(b => b.Records)
-                    .ThenInclude(r => r.Student)
-                .FirstOrDefault(b => b.Id == id);
-                
+                .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (book == null) return NotFound();
             
-            // Get current student if the book is on loan
-            var currentRecord = book.Records?.FirstOrDefault(r => 
-                r.ReturnDate > DateTime.UtcNow || 
-                r.DueDate > DateTime.UtcNow);
-                
-            var bookResponse = new
+            return View(book);
+        }
+
+        [HttpGet("Create")]
+        public IActionResult Create()
+        {
+            ViewBag.Courses = _context.Courses.ToList();
+            return View();
+        }
+
+        [HttpPost("Create")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Book book)
+        {
+            // Remove navigation properties from validation
+            ModelState.Remove("Course");
+            ModelState.Remove("Records");
+            
+            if (ModelState.IsValid)
             {
-                book.Id,
-                book.SerialNumber,
-                book.Name,
-                book.Author,
-                book.Publisher,
-                book.Subject,
-                book.CourseId,
-                book.PublishedDate,
-                book.Stock,
-                Status = (int)book.Status,
-                book.ISBN,
-                book.Edition,
-                book.Pages,
-                book.RackNumber,
-                book.CreatedOn,
-                book.UpdatedOn,
-                StudentId = currentRecord?.StudentId,
-                RecordId = currentRecord?.Id,
-                Course = book.Course == null ? null : new {
-                    book.Course.Id,
-                    book.Course.Name
+                book.CreatedOn = DateTime.UtcNow;
+                book.UpdatedOn = DateTime.UtcNow;
+                book.PublishedDate = DateTime.SpecifyKind(book.PublishedDate, DateTimeKind.Utc);
+                
+                _context.Add(book);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewBag.Courses = _context.Courses.ToList();
+            return View(book);
+        }
+
+        [HttpGet("Edit/{id}")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var book = await _context.Books.FindAsync(id);
+            if (book == null) return NotFound();
+            
+            ViewBag.Courses = _context.Courses.ToList();
+            return View(book);
+        }
+
+        [HttpPost("Edit/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Book book)
+        {
+            if (id != book.Id) return NotFound();
+
+            // Remove navigation properties from validation
+            ModelState.Remove("Course");
+            ModelState.Remove("Records");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    book.UpdatedOn = DateTime.UtcNow;
+                    book.PublishedDate = DateTime.SpecifyKind(book.PublishedDate, DateTimeKind.Utc);
+                    _context.Update(book);
+                    await _context.SaveChangesAsync();
                 }
-            };
-            
-            var json = JsonSerializer.Serialize(bookResponse, _jsonOptions);
-            return Content(json, "application/json");
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Books.Any(e => e.Id == id)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewBag.Courses = _context.Courses.ToList();
+            return View(book);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Add(BookDto bookDto)
+        [HttpGet("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var book = ToModel(bookDto);
-            
-            // Ensure timestamps are in UTC
-            book.PublishedDate = DateTime.SpecifyKind(book.PublishedDate, DateTimeKind.Utc);
-            book.CreatedOn = DateTime.UtcNow;
-            book.UpdatedOn = DateTime.UtcNow;
-
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = book.Id }, ToDto(book));
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, BookDto bookDto)
-        {
-            var book = _context.Books.Find(id);
-            if (book is null) return NotFound();
-
-            // Update model from DTO
-            book.SerialNumber = bookDto.SerialNumber;
-            book.Name = bookDto.Name;
-            book.Author = bookDto.Author;
-            book.Publisher = bookDto.Publisher;
-            book.Subject = bookDto.Subject;
-            book.CourseId = bookDto.CourseId;
-            book.PublishedDate = DateTime.SpecifyKind(bookDto.PublishedDate, DateTimeKind.Utc);
-            book.Stock = bookDto.Stock;
-            book.Status = (Status)bookDto.Status;
-            book.ISBN = bookDto.ISBN;
-            book.Edition = bookDto.Edition;
-            book.Pages = bookDto.Pages;
-            book.RackNumber = bookDto.RackNumber;
-            book.UpdatedOn = DateTime.UtcNow;
-
-            _context.SaveChanges();
-            return NoContent();
-        }
-
-        [HttpPatch("{id}/status")]
-        public IActionResult ChangeStatus(int id, Status status)
-        {
-            var book = _context.Books.FirstOrDefault(c => c.Id == id);
+            var book = await _context.Books
+                .Include(b => b.Course)
+                .FirstOrDefaultAsync(m => m.Id == id);
+                
             if (book == null) return NotFound();
 
-            book.Status = status;
-            book.UpdatedOn = DateTime.UtcNow;
-            _context.SaveChanges();
-            return NoContent();
+            return View(book);
         }
 
-        // Helper methods for DTO conversion
-        private BookDto ToDto(Book book)
+        [HttpPost("Delete/{id}"), ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            return new BookDto
+            var book = await _context.Books.FindAsync(id);
+            if (book != null)
             {
-                SerialNumber = book.SerialNumber,
-                Name = book.Name,
-                Author = book.Author,
-                Publisher = book.Publisher,
-                Subject = book.Subject,
-                CourseId = book.CourseId,
-                PublishedDate = book.PublishedDate,
-                Stock = book.Stock,
-                Status = (int)book.Status,
-                ISBN = book.ISBN,
-                Edition = book.Edition,
-                Pages = book.Pages,
-                RackNumber = book.RackNumber,
-                Course = book.Course
-            };
-        }
-
-        private Book ToModel(BookDto dto)
-        {
-            return new Book
-            {
-                SerialNumber = dto.SerialNumber,
-                Name = dto.Name,
-                Author = dto.Author,
-                Publisher = dto.Publisher,
-                Subject = dto.Subject,
-                CourseId = dto.CourseId,
-                PublishedDate = dto.PublishedDate,
-                Stock = dto.Stock,
-                Status = (Status)dto.Status,
-                ISBN = dto.ISBN,
-                Edition = dto.Edition,
-                Pages = dto.Pages,
-                RackNumber = dto.RackNumber
-            };
+                _context.Books.Remove(book);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

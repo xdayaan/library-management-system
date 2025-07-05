@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to Library Management System</h1>
+    <p>Manage your library efficiently with our modern system.</p>
+    
+    <div class="d-flex justify-center gap-2 mt-4" style="margin-top: 2rem;">
+        <a asp-controller="Books" asp-action="Index" class="btn btn-primary">Manage Books</a>
+        <a asp-controller="Students" asp-action="Index" class="btn btn-primary">Manage Students</a>
+        <a asp-controller="Record" asp-action="Index" class="btn btn-primary">View Records</a>
+    </div>
+</div>

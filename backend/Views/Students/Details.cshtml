@@ -1,0 +1,73 @@
+@model LMS.Models.Student
+
+@{
+    ViewData["Title"] = "Student Details";
+}
+
+<div class="max-w-3xl mx-auto">
+    <div class="d-flex justify-between items-center mb-4">
+        <h1>Student Details</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="card p-6 mb-4">
+        <div class="d-flex items-center gap-6 mb-6 pb-6 border-b">
+            @if (!string.IsNullOrEmpty(Model.Photo))
+            {
+                <img src="@Model.Photo" alt="@Model.Name" class="w-24 h-24 rounded-full object-cover border-2 border-slate-200" />
+            }
+            else
+            {
+                <div class="w-24 h-24 rounded-full bg-slate-100 d-flex justify-center items-center">
+                    <i class="fas fa-user text-4xl text-slate-300"></i>
+                </div>
+            }
+            <div>
+                <h2 class="text-2xl font-bold">@Model.Name</h2>
+                <p class="text-secondary">@Model.Email</p>
+                <div class="mt-2">
+                    <span class="badge bg-primary">Roll No: @Model.RollNumber</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <dl class="grid grid-cols-2 gap-2">
+                    <dt class="font-bold text-secondary">Father's Name:</dt>
+                    <dd>@Model.FatherName</dd>
+                    
+                    <dt class="font-bold text-secondary">Phone:</dt>
+                    <dd>@Model.Phone</dd>
+                    
+                    <dt class="font-bold text-secondary">Gender:</dt>
+                    <dd>@Model.Gender</dd>
+                    
+                    <dt class="font-bold text-secondary">Address:</dt>
+                    <dd>@Model.Address</dd>
+                </dl>
+            </div>
+            
+            <div>
+                <dl class="grid grid-cols-2 gap-2">
+                    <dt class="font-bold text-secondary">Course:</dt>
+                    <dd>@(Model.Course != null ? Model.Course.Name : "N/A")</dd>
+                    
+                    <dt class="font-bold text-secondary">Year/Semester:</dt>
+                    <dd>@Model.Year</dd>
+                    
+                    <dt class="font-bold text-secondary">Joined On:</dt>
+                    <dd>@Model.CreatedOn.ToShortDateString()</dd>
+                </dl>
+            </div>
+        </div>
+        
+    </div>
+</div>

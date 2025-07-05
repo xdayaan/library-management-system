@@ -1,37 +1,60 @@
 @model IEnumerable<LMS.Models.Book>
 
-<h1>Books</h1>
+@{
+    ViewData["Title"] = "Books";
+}
 
-<table>
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Serial Number</th>
-            <th>Name</th>
-            <th>Author</th>
-            <th>Publisher</th>
-            <th>Subject</th>
-            <th>Course</th>
-            <th>Published Date</th>
-            <th>Stock</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var book in Model)
-        {
+<div class="d-flex justify-between items-center mb-4">
+    <h1>Books</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add New Book
+    </a>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
             <tr>
-                <td>@book.Id</td>
-                <td>@book.SerialNumber</td>
-                <td>@book.Name</td>
-                <td>@book.Author</td>
-                <td>@book.Publisher</td>
-                <td>@book.Subject</td>
-                <td>@(book.Course != null ? book.Course.Name : "N/A")</td>
-                <td>@book.PublishedDate.ToString("yyyy-MM-dd")</td>
-                <td>@book.Stock</td>
-                <td>@book.Status</td>
+                <th>Id</th>
+                <th>Serial Number</th>
+                <th>Name</th>
+                <th>Author</th>
+                <th>Publisher</th>
+                <th>Subject</th>
+                <th>Course</th>
+                <th>Published Date</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th class="text-center">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td>#@book.Id</td>
+                    <td>@book.SerialNumber</td>
+                    <td>@book.Name</td>
+                    <td>@book.Author</td>
+                    <td>@book.Publisher</td>
+                    <td>@book.Subject</td>
+                    <td>@(book.Course != null ? book.Course.Name : "N/A")</td>
+                    <td>@book.PublishedDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <span class="badge @(book.Stock > 0 ? "bg-success" : "bg-danger")">
+                            @book.Stock
+                        </span>
+                    </td>
+                    <td>@book.Status</td>
+                    <td class="text-center">
+                        <div class="d-flex gap-2 justify-center">
+                            <a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-secondary btn-sm"><i class="fas fa-info-circle"></i></a>
+                            <a asp-action="Delete" asp-route-id="@book.Id" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

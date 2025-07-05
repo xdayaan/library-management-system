@@ -1,0 +1,252 @@
+/* Compatibility with existing Views using custom classes */
+
+/* Redefine card to match Tailwind theme */
+.card {
+    background-color: white;
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    border: 1px solid #e2e8f0;
+    /* slate-200 */
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    /* shadow-sm */
+    padding: 1.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    /* shadow-md */
+    transform: translateY(-2px);
+}
+
+/* Redefine buttons to match Tailwind theme */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    /* rounded-lg */
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition-duration: 200ms;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    /* brand-600 */
+    color: white;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    /* brand-700 */
+    color: white;
+}
+
+.btn-secondary {
+    background-color: white;
+    color: #1e293b;
+    /* slate-800 */
+    border: 1px solid #e2e8f0;
+    /* slate-200 */
+}
+
+.btn-secondary:hover {
+    background-color: #f8fafc;
+    /* slate-50 */
+    border-color: #cbd5e1;
+    /* slate-300 */
+    color: #0f172a;
+    /* slate-900 */
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    /* red-500 */
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+    /* red-600 */
+    color: white;
+}
+
+/* Form Controls */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    color: #1e293b;
+    /* slate-800 */
+    background-color: white;
+    background-clip: padding-box;
+    border: 1px solid #cbd5e1;
+    /* slate-300 */
+    border-radius: 0.5rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    color: #1e293b;
+    background-color: white;
+    border-color: #3b82f6;
+    /* brand-500 */
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    /* ring-brand-500/10 */
+}
+
+.control-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+    /* slate-600 */
+}
+
+.text-danger {
+    color: #ef4444;
+    /* red-500 */
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Table Container (Card-like) */
+.table-container {
+    background-color: white;
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    border: 1px solid #e2e8f0;
+    /* slate-200 */
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    /* shadow-sm */
+    overflow: hidden;
+    /* rounded corners clip content */
+    margin-bottom: 2rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    color: #1e293b;
+    /* slate-800 */
+    border-collapse: collapse;
+}
+
+table thead {
+    background-color: #f8fafc;
+    /* slate-50 */
+    border-bottom: 1px solid #e2e8f0;
+    /* slate-200 */
+}
+
+table th {
+    padding: 0.75rem 1.5rem;
+    /* Increased padding */
+    text-align: left;
+    font-weight: 600;
+    color: #475569;
+    /* slate-600 */
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+table td {
+    padding: 1rem 1.5rem;
+    /* Increased padding */
+    border-bottom: 1px solid #e2e8f0;
+    /* slate-200 */
+    vertical-align: middle;
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+table tbody tr:hover {
+    background-color: #f8fafc;
+    /* slate-50 */
+}
+
+/* Utilities */
+.d-flex {
+    display: flex;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.font-bold {
+    font-weight: 600;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.text-secondary {
+    color: #64748b;
+}
+
+.text-success {
+    color: #10b981;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.gap-3 {
+    gap: 0.75rem;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mr-1 {
+    margin-right: 0.25rem;
+}
+
+.mr-2 {
+    margin-right: 0.5rem;
+}

@@ -1,0 +1,11 @@
+**/.git
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/.env
+**/out
+**/publish
+.dockerignore
+Dockerfile
+fly.toml

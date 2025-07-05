@@ -1,20 +1,40 @@
 @model IEnumerable<LMS.Models.Librarian>
 
-<h1>Librarian</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>UsernameName</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var librarian in Model)
-    {
-        <tr>
-            <td>@librarian.Id</td>
-            <td>@librarian.Name</td>
-        </tr>
-    }
-    </tbody>
-</table>
+@{
+    ViewData["Title"] = "Librarians";
+}
+
+<div class="d-flex justify-between items-center mb-4">
+    <h1>Librarians</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add New Librarian
+    </a>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var librarian in Model)
+            {
+                <tr>
+                    <td>#@librarian.Id</td>
+                    <td>@librarian.Name</td>
+                    <td class="text-center">
+                        <div class="d-flex gap-2 justify-center">
+                            <a asp-action="Edit" asp-route-id="@librarian.Id" class="btn btn-secondary"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Details" asp-route-id="@librarian.Id" class="btn btn-secondary"><i class="fas fa-info-circle"></i></a>
+                            <a asp-action="Delete" asp-route-id="@librarian.Id" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,36 @@
+@model LMS.Models.Librarian
+
+@{
+    ViewData["Title"] = "Delete Librarian";
+}
+
+<div class="max-w-lg mx-auto">
+    <div class="card p-6 border-danger">
+        <div class="text-center mb-6">
+            <div class="text-danger text-4xl mb-4">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h1 class="text-2xl text-danger mb-2">Delete Librarian?</h1>
+            <p class="text-secondary">Are you sure you want to delete this librarian? This action cannot be undone.</p>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded mb-6">
+            <dl class="grid grid-cols-2 gap-2">
+                <dt class="font-bold">ID:</dt>
+                <dd>#@Model.Id</dd>
+                
+                <dt class="font-bold">Name:</dt>
+                <dd>@Model.Name</dd>
+                
+                <dt class="font-bold">Username:</dt>
+                <dd>@Model.Username</dd>
+            </dl>
+        </div>
+
+        <form asp-action="Delete" class="d-flex justify-center gap-4">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-danger">Delete Librarian</button>
+        </form>
+    </div>
+</div>

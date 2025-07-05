@@ -1,22 +1,60 @@
 @model IEnumerable<LMS.Models.Record>
-<h1>Records</h1>
+@{
+    ViewData["Title"] = "Records";
+}
 
-<table>
-    <thead>
-        <tr>
-            <th>Book</th>
-            <th>Student</th>
-            <th>Fine</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="d-flex justify-between items-center mb-4">
+    <h1>Records</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add New Record
+    </a>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
             <tr>
-                <td>@(item.Book?.Name ?? "N/A") (@item.BookId)</td>
-                <td>@(item.Student?.Name ?? "N/A") (@item.StudentId)</td>
-                <td>@item.Fine</td>
+                <th>Book</th>
+                <th>Student</th>
+                <th>Fine</th>
+                <th class="text-center">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span class="font-bold">@item.Book?.Name</span>
+                            <span class="text-sm text-secondary">ID: @item.BookId</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span class="font-bold">@item.Student?.Name</span>
+                            <span class="text-sm text-secondary">ID: @item.StudentId</span>
+                        </div>
+                    </td>
+                    <td>
+                        @if (item.Fine > 0)
+                        {
+                            <span class="text-danger font-bold">@item.Fine.ToString("C")</span>
+                        }
+                        else
+                        {
+                            <span class="text-success">No Fine</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <div class="d-flex gap-2 justify-center">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary"><i class="fas fa-info-circle"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

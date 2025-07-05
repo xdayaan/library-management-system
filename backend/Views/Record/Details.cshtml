@@ -1,0 +1,61 @@
+@model LMS.Models.Record
+
+@{
+    ViewData["Title"] = "Record Details";
+}
+
+<div class="max-w-2xl mx-auto">
+    <div class="d-flex justify-between items-center mb-4">
+        <h1>Record Details</h1>
+        <div class="d-flex gap-2">
+            @if (Model.ReturnDate == null)
+            {
+                <form asp-action="Return" asp-route-id="@Model.Id" class="d-inline">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-undo"></i> Return Book
+                    </button>
+                </form>
+            }
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="card p-6 mb-4">
+        <h2 class="text-xl mb-4 border-b pb-2">Record #@Model.Id</h2>
+        
+        <div class="grid grid-cols-2 gap-6">
+            <div>
+                <dl class="grid grid-cols-2 gap-2">
+                    <dt class="font-bold text-secondary">Book:</dt>
+                    <dd>@(Model.Book != null ? Model.Book.Name : "N/A")</dd>
+                    
+                    <dt class="font-bold text-secondary">Student:</dt>
+                    <dd>@(Model.Student != null ? Model.Student.Name : "N/A")</dd>
+                    
+                    <dt class="font-bold text-secondary">Issue Date:</dt>
+                    <dd>@Model.IssueDate.ToShortDateString()</dd>
+                </dl>
+            </div>
+            
+            <div>
+                <dl class="grid grid-cols-2 gap-2">
+                    <dt class="font-bold text-secondary">Due Date:</dt>
+                    <dd>@Model.DueDate.ToShortDateString()</dd>
+                    
+                    <dt class="font-bold text-secondary">Return Date:</dt>
+                    <dd>@(Model.ReturnDate.HasValue ? Model.ReturnDate.Value.ToShortDateString() : "Not Returned")</dd>
+                    
+                    <dt class="font-bold text-secondary">Fine:</dt>
+                    <dd class="@(Model.Fine > 0 ? "text-danger font-bold" : "text-success")">
+                        @(Model.Fine > 0 ? Model.Fine.ToString("C") : "None")
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

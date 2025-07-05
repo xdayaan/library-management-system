@@ -1,0 +1,113 @@
+@model LMS.Models.Book
+
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<div class="max-w-3xl mx-auto">
+    <div class="d-flex justify-between items-center mb-4">
+        <h1>Edit Book</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <div class="card p-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedOn" />
+            <input type="hidden" asp-for="Records" />
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-group">
+                    <label asp-for="SerialNumber" class="control-label">Serial Number</label>
+                    <input asp-for="SerialNumber" class="form-control" />
+                    <span asp-validation-for="SerialNumber" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ISBN" class="control-label">ISBN</label>
+                    <input asp-for="ISBN" class="form-control" />
+                    <span asp-validation-for="ISBN" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-span-2">
+                    <label asp-for="Name" class="control-label">Book Name</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Author" class="control-label">Author</label>
+                    <input asp-for="Author" class="form-control" />
+                    <span asp-validation-for="Author" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Publisher" class="control-label">Publisher</label>
+                    <input asp-for="Publisher" class="form-control" />
+                    <span asp-validation-for="Publisher" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Subject" class="control-label">Subject</label>
+                    <input asp-for="Subject" class="form-control" />
+                    <span asp-validation-for="Subject" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CourseId" class="control-label">Course</label>
+                    <select asp-for="CourseId" class="form-control" asp-items="@(new SelectList(ViewBag.Courses, "Id", "Name"))">
+                        <option value="">-- Select Course --</option>
+                    </select>
+                    <span asp-validation-for="CourseId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PublishedDate" class="control-label">Published Date</label>
+                    <input asp-for="PublishedDate" class="form-control" type="date" />
+                    <span asp-validation-for="PublishedDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Stock" class="control-label">Stock Quantity</label>
+                    <input asp-for="Stock" class="form-control" />
+                    <span asp-validation-for="Stock" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Status" class="control-label">Status</label>
+                    <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<LMS.Models.Status>()"></select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Edition" class="control-label">Edition</label>
+                    <input asp-for="Edition" class="form-control" />
+                    <span asp-validation-for="Edition" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Pages" class="control-label">Pages</label>
+                    <input asp-for="Pages" class="form-control" />
+                    <span asp-validation-for="Pages" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="RackNumber" class="control-label">Rack Number</label>
+                    <input asp-for="RackNumber" class="form-control" />
+                    <span asp-validation-for="RackNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="d-flex justify-end mt-6">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

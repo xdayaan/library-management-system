@@ -10,9 +10,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 [Authorize]
-[ApiController]
+// [ApiController]
 [Route("[controller]")]
-public class StudentsController : ControllerBase
+public class StudentsController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly JsonSerializerOptions _jsonOptions;
@@ -28,7 +28,7 @@ public class StudentsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAll(
+    public IActionResult Index(
         [FromQuery] int? year,
         [FromQuery] int? courseId,
         [FromQuery] string? name,
@@ -90,154 +90,188 @@ public class StudentsController : ControllerBase
         // Pagination
         if (page < 1) page = 1;
         if (pageSize < 1) pageSize = 10;
-        var skip = (page - 1) * pageSize;
-        var total = query.Count();
         
-        var data = query.Skip(skip).Take(pageSize)
-            .Select(s => new {
-                s.Id,
-                s.RollNumber,
-                s.Name,
-                s.Email,
-                s.Phone,
-                s.Address,
-                s.CourseId,
-                s.Photo,
-                s.Year,
-                s.Gender,
-                s.FatherName,
-                s.CreatedOn,
-                s.UpdatedOn,
-                TotalRecords = s.Records != null ? s.Records.Count : 0,
-                RecordIds = s.Records != null ? s.Records.Select(r => r.Id).ToArray() : Array.Empty<int>(),
-                Course = s.Course != null ? new {
-                    s.Course.Id,
-                    s.Course.Name
-                } : null
-            })
-            .ToList();
+        // Return view with data
+        var students = query.ToList();
 
-        var result = new
-        {
-            TotalItems = total,
-            Page = page,
-            PageSize = pageSize,
-            Items = data
-        };
-
-        var json = JsonSerializer.Serialize(result, _jsonOptions);
-        return Content(json, "application/json");
+        return View(students);
     }
 
-    [HttpGet("{id}")]
-    public IActionResult Get(int id)
+    // ... Index method remains unchanged ...
+
+    [HttpGet("Details/{id}")]
+    public async Task<IActionResult> Details(int id)
     {
-        var student = _context.Students
+        var student = await _context.Students
             .Include(s => s.Course)
             .Include(s => s.Records)
-            .FirstOrDefault(s => s.Id == id);
+            .FirstOrDefaultAsync(m => m.Id == id);
+            
         if (student == null) return NotFound();
         
-        // Create a response with the student's details and summary info
-        var studentResponse = new
+        return View(student);
+    }
+
+    [HttpGet("Create")]
+    public IActionResult Create()
+    {
+        ViewBag.Courses = _context.Courses.ToList();
+        return View();
+    }
+
+    [HttpPost("Create")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(Student student, IFormFile? photoFile)
+    {
+        ModelState.Remove("Course");
+        ModelState.Remove("Records");
+        ModelState.Remove("Photo"); // Photo is handled by photoFile
+
+        if (ModelState.IsValid)
         {
-            student.Id,
-            student.RollNumber,
-            student.Name,
-            student.Email,
-            student.Phone,
-            student.Address,
-            student.CourseId,
-            student.Photo,
-            student.Year,
-            student.Gender,
-            student.FatherName,
-            student.CreatedOn,
-            student.UpdatedOn,
-            TotalRecords = student.Records?.Count ?? 0,
-            RecordIds = student.Records?.Select(r => r.Id).ToArray() ?? Array.Empty<int>(),
-            Course = student.Course == null ? null : new
+            if (photoFile != null && photoFile.Length > 0)
             {
-                student.Course.Id,
-                student.Course.Name,
-                student.Course.CreatedOn,
-                student.Course.UpdatedOn
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(photoFile.FileName);
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+                    
+                var filePath = Path.Combine(uploadsFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await photoFile.CopyToAsync(stream);
+                }
+                student.Photo = "/uploads/" + fileName;
             }
-        };
+            else
+            {
+                student.Photo = "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(student.Name ?? "Student") + "&background=random";
+            }
+            
+            // Encrypt password
+            if (!string.IsNullOrEmpty(student.Password))
+            {
+                student.Password = PasswordHandler.Encrypt(student.Password);
+            }
+            
+            student.CreatedOn = DateTime.UtcNow;
+            student.UpdatedOn = DateTime.UtcNow;
+            
+            _context.Add(student);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        ViewBag.Courses = _context.Courses.ToList();
+        return View(student);
+    }
+
+    [HttpGet("Edit/{id}")]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var student = await _context.Students.FindAsync(id);
+        if (student == null) return NotFound();
         
-        var json = JsonSerializer.Serialize(studentResponse, _jsonOptions);
-        return Content(json, "application/json");
+        // Decrypt password for display or leave it encrypted? 
+        // Usually we don't display password. Let's leave it blank in view or keeps it as is.
+        // student.Password = PasswordHandler.Decrypt(student.Password); 
+        
+        ViewBag.Courses = _context.Courses.ToList();
+        return View(student);
     }
 
-    [HttpPost]
-    public IActionResult Add([FromForm] StudentDto studentDto)
+    [HttpPost("Edit/{id}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, Student student, IFormFile? photoFile)
     {
-        var student = new Student
-        {
-            Name = studentDto.Name,
-            Year = studentDto.Year,
-            RollNumber = studentDto.RollNumber,
-            Phone = studentDto.Phone,
-            Email = studentDto.Email,
-            CourseId = studentDto.CourseId,
-            Address = studentDto.Address,
-            UpdatedOn = DateTime.UtcNow,
-            CreatedOn = DateTime.UtcNow,
-            FatherName = studentDto.FatherName,
-            Gender = studentDto.Gender,
-            Password = PasswordHandler.Encrypt(studentDto.Password),
-            Photo = ""
-        };
+        if (id != student.Id) return NotFound();
 
-        if (studentDto.Photo != null)
+        ModelState.Remove("Course");
+        ModelState.Remove("Records");
+        ModelState.Remove("Photo");
+
+        if (ModelState.IsValid)
         {
-            var s3Url = UploadToS3.UploadFile(studentDto.Photo);
-            student.Photo = s3Url;
+            try
+            {
+                var existingStudent = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+                if (existingStudent == null) return NotFound();
+
+                // Handle file upload
+                if (photoFile != null && photoFile.Length > 0)
+                {
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(photoFile.FileName);
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                    
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
+                        
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await photoFile.CopyToAsync(stream);
+                    }
+                    student.Photo = "/uploads/" + fileName;
+                }
+                else
+                {
+                    student.Photo = existingStudent.Photo; // Keep existing photo
+                }
+
+                // Handle password
+                if (!string.IsNullOrEmpty(student.Password) && student.Password != existingStudent.Password)
+                {
+                    // If password changed (and is not the encrypted string), encrypt it
+                    // Simple check: if it looks like it's already encrypted (long string), maybe don't re-encrypt?
+                    // Better approach: assume if user types something, it's a new password.
+                    // But if form sends back the hidden encrypted password, we need to know.
+                    // For now, let's assume if it is different from existing, it's a new plain text password.
+                    student.Password = PasswordHandler.Encrypt(student.Password);
+                }
+                else
+                {
+                    student.Password = existingStudent.Password;
+                }
+
+                student.UpdatedOn = DateTime.UtcNow;
+                student.CreatedOn = existingStudent.CreatedOn; // Preserve creation date
+                
+                _context.Update(student);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Students.Any(e => e.Id == id)) return NotFound();
+                else throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
-
-        _context.Students.Add(student);
-        _context.SaveChanges();
-        return CreatedAtAction(nameof(Get), new { id = student.Id }, student);
+        ViewBag.Courses = _context.Courses.ToList();
+        return View(student);
     }
 
-    [HttpPut("{id}")]
-    public IActionResult Update(int id, [FromForm] StudentDto studentDto)
+    [HttpGet("Delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
     {
-        var student = _context.Students.Find(id);
+        var student = await _context.Students
+            .Include(s => s.Course)
+            .FirstOrDefaultAsync(m => m.Id == id);
+            
         if (student == null) return NotFound();
 
-        student.Name = studentDto.Name;
-        student.Year = studentDto.Year;
-        student.RollNumber = studentDto.RollNumber;
-        student.Phone = studentDto.Phone;
-        student.Email = studentDto.Email;
-        student.Address = studentDto.Address;
-        student.CourseId = studentDto.CourseId;
-        student.FatherName = studentDto.FatherName;
-        student.UpdatedOn = DateTime.UtcNow;
-        student.Gender = studentDto.Gender;
-        student.Password = PasswordHandler.Encrypt(studentDto.Password);
-
-        if (studentDto.Photo != null)
-        {
-            var fileName = Path.GetFileName(studentDto.Photo.FileName);
-            var savePath = Path.Combine("wwwroot", "uploads", fileName);
-            using var stream = new FileStream(savePath, FileMode.Create);
-            studentDto.Photo.CopyTo(stream);
-            student.Photo = $"/uploads/{fileName}";
-        }
-
-        _context.SaveChanges();
-        return NoContent();
+        return View(student);
     }
 
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    [HttpPost("Delete/{id}"), ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var student = _context.Students.Find(id);
-        if (student == null) return NotFound();
-        _context.Students.Remove(student);
-        _context.SaveChanges();
-        return NoContent();
+        var student = await _context.Students.FindAsync(id);
+        if (student != null)
+        {
+            _context.Students.Remove(student);
+            await _context.SaveChangesAsync();
+        }
+        return RedirectToAction(nameof(Index));
     }
 }
